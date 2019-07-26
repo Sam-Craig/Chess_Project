@@ -10,10 +10,18 @@ typedef struct{
     int arr[8][8];
 } board;
 
-// This is a 140x5 array. 
-typedef int ** movearr;
+// This is a 140x5 array.
+typedef int moveinfoarr[5];
 
+typedef struct{
+    moveinfoarr movearr[140];
+    int cur;
+} pmoves;
+
+// Could maybe be a macro?
 char inttopiece(int piece);
+
+void printpossiblemoves(pmoves *possiblemoves);
 
 void printboard(board toprint);
 
@@ -21,9 +29,9 @@ board* initboard();
 
 void movepiece(board *game, int xinit, int yinit, int xdest, int ydest, int testlegal);
 
-movearr getlegalmoves(board game, int side);
+pmoves * getlegalmoves(board game, int side);
 
-int pawnlegalmoves(board game, movearr moves, int cur, int x, int y, int side);
+void pawnlegalmoves(board game, pmoves * moves, int x, int y, int side);
 
 // int knightlegalmoves(board game, movearr * moves, int cur, int x, int y, int side);
 

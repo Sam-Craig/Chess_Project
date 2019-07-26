@@ -41,6 +41,18 @@ char inttopiece(int piece)
     return 'X';
 }
 
+void printpossiblemoves(pmoves * possiblemoves) 
+{
+    for (int i = 0; i < possiblemoves -> cur; i++) 
+    {
+        for (int j = 0; j < 5; j++) 
+        {
+            printf("%d ", (possiblemoves -> movearr)[i][j]);
+        }
+        printf("\n");
+    }
+}
+
 void printboard(board toprint)
 {   
     printf("   A|B|C|D|E|F|G|H\n");
@@ -80,19 +92,20 @@ void movepiece(board *game, int xinit, int yinit, int xdest, int ydest, int test
     game->arr[yinit][xinit] = 0;
 }
 
-//gets all legal moves for a side with given board. Stores it in a 2d array of the form [[piecexloc, pieceyloc, destxloc, destyloc, points]...] with space for all possible moves 32 moves for pawns, 28 moves for rooks, 16 moves for knights, 28 moves for bishops, 28 moves for queen, 8 moves for king = 140 possible moves
+//gets all legal moves for a side with given board. Stores it in a 2d array of the form [[piecexloc, pieceyloc, destxloc, destyloc, points]...] with space for all possible moves 32 moves for pawns, 28 moves for rooks, 16 moves for knights, 28 moves for bishops, 28 moves for queen, 8 moves for king = 140 possible moves. Hence movearr is a 140x5 array. 
 
 //side:1 = white, -1 = black
 
-movearr getlegalmoves(board game, int side)
+pmoves * getlegalmoves(board game, int side)
 {
-    movearr possiblemoves;
+    // Remember to free after done using
+    pmoves * possiblemoves = malloc(sizeof(pmoves));
     int cur = 0;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             //if the tile contains a pawn of the correct side
             if (game.arr[i][j] == side * 1) {
-                cur = pawnlegalmoves(game, possiblemoves, cur, i, j, side); 
+                pawnlegalmoves(game, possiblemoves, i, j, side); 
             }
             else if (game.arr[i][j] == side * 2) {
                 // cur = knightlegalmoves(game, possiblemoves, cur, i, j, side);
@@ -119,27 +132,27 @@ movearr getlegalmoves(board game, int side)
 }
 
 //ToDo: Add promotion
-int pawnlegalmoves(board game, movearr moves, int cur, int x, int y, int side) {
+void pawnlegalmoves(board game, pmoves * moves, int x, int y, int side) {
     //This might be doable without considering which side we are on using multiplication with side
     if (side == 1) {
         //piece forward and to the right. Tests if there is space to the right and forward of the pawn and if the space has an opposing piece
-        if (x > 0 && y < 7 && game.arr[x - 1][y + 1] < 0) {
-            int temp[5] = {x, y, x - 1, y + 1, scorearr[game.arr[x - 1][y + 1] + 6]};
-            memcpy(moves[cur++], temp, 5*sizeof(int));
+        if (y > 0 && x < 7 && game.arr[x + 1][y - 1] < 0) {
+            int temp[5] = {x, y, x + 1, y - 1, scorearr[game.arr[x + 1][y - 1] + 6]};
+            memcpy((moves->movearr)[(moves->cur)++], temp, 5 * sizeof(int));
         }
         //piece forward and to the left. Same tests.
         if (x < 7 && y < 7 && game.arr[x + 1][y + 1] < 0) {
             int temp[5] = {x, y, x + 1, y + 1, scorearr[game.arr[x + 1][y + 1] + 6]};
-            memcpy(moves[cur++], temp, 5 * sizeof(int));
+            memcpy((moves->movearr)[(moves->cur)++], temp, 5 * sizeof(int));
         }
         //piece forward one square. Tests if square exists and is empty. 
-        if (y < 7 && game.arr[x][y + 1] == 0) {
-            int temp[5] = {x, y, x, y + 1, 0};
-            memcpy(moves[cur++], temp, 5 * sizeof(int));
+        if (x < 7 && game.arr[x+1][y] == 0) {
+            int temp[5] = {x, y, x+1, y, 0};
+            memcpy(moves->movearr[(moves->cur)++], temp, 5 * sizeof(int));
             //can only move forward two peices if you can move forward one piece and started from original position
-            if (y == 1 && game.arr[x][y + 2] == 0) {
-                int temp[5] = {x,y,x,y+2,0};
-                memcpy(moves[cur++], temp, 5 * sizeof(int));
+            if (x == 1 && game.arr[x+2][y] == 0) {
+                int temp[5] = {x,y,x+2,y,0};
+                memcpy(moves->movearr[(moves->cur)++], temp, 5 * sizeof(int));
             }
         }
     }
@@ -149,29 +162,28 @@ int pawnlegalmoves(board game, movearr moves, int cur, int x, int y, int side) {
         if (x > 0 && y > 0 && game.arr[x - 1][y - 1] > 0)
         {
             int temp[5] = {x, y, x - 1, y - 1, scorearr[game.arr[x - 1][y + 1] + 6]};
-            memcpy(moves[cur++], temp, 5 * sizeof(int));
+            memcpy(moves->movearr[(moves->cur)++], temp, 5 * sizeof(int));
         }
         //piece forward and to the left. Same tests.
-        if (x < 7 && y > 0 && game.arr[x + 1][y - 1] > 0)
+        if (y < 7 && x > 0 && game.arr[x - 1][y + 1] > 0)
         {
-            int temp[5] = {x, y, x + 1, y - 1, scorearr[game.arr[x + 1][y + 1] + 6]};
-            memcpy(moves[cur++], temp, 5 * sizeof(int));
+            int temp[5] = {x, y, x - 1, y + 1, scorearr[game.arr[x + 1][y + 1] + 6]};
+            memcpy(moves->movearr[(moves->cur)++], temp, 5 * sizeof(int));
         }
         //piece forward one square. Tests if square exists and is empty.
-        if (y > 0 && game.arr[x][y - 1] == 0)
+        if (x > 0 && game.arr[x-1][y] == 0)
         {
-            int temp[5] = {x, y, x, y - 1, 0};
-            memcpy(moves[cur++], temp, 5 * sizeof(int));
+            int temp[5] = {x, y, x-1, y, 0};
+            memcpy(moves->movearr[(moves->cur)++], temp, 5 * sizeof(int));
             //can only move forward two peices if you can move forward one piece and started from original position
-            if (y == 6 && game.arr[x][y + 2] == 0)
+            if (x == 6 && game.arr[x - 2][y] == 0)
             {
-                int temp[5] = {x, y, x, y - 2, 0};
-                memcpy(moves[cur++], temp, 5 * sizeof(int));
+                int temp[5] = {x, y, x - 2, y, 0};
+                memcpy(moves->movearr[(moves->cur)++], temp, 5 * sizeof(int));
             }
         }
     }
     else {
         printf("Problem\n");
     }
-    return cur;
 }

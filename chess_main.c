@@ -6,8 +6,8 @@ int main(void)
 {
     board *newboard = initboard();
     printboard(*newboard);
-    printf("executing move\n");
-    movepiece(newboard, 2,1,2,3,0);
-    printboard(*newboard);
+    pmoves * p1 = getlegalmoves(*newboard, 1);
+    printpossiblemoves(p);
+    free(p1);
     return (0);
 }
