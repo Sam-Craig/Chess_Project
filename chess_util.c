@@ -266,4 +266,7 @@ void queenlegalmoves(board game, pmoves * moves, int x, int y, int side)
 }
 
 // This is going to be very complicated b/c we need to test if any piece can move where the king wants to move to
-void kinglegalmoves(board game, pmoves * moves, int x, int y, int side);
+void kinglegalmoves(board game, pmoves * moves, int x, int y, int side) 
+{
+    return;
+}

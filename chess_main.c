@@ -5,15 +5,16 @@
 
 int main(void)
 {
+    // ad hoc testing for now; making, modifying, and printing boards + printing possible moves
     board *newboard = initboard();
     printboard(*newboard);
     pmoves *p1 = getlegalmoves(*newboard, 1);
     printpossiblemoves(p1, *newboard);
-    free(p1);
     movepiece(newboard, 0, 6, 0, 2, 0);
     printboard(*newboard);
     pmoves *p2 = getlegalmoves(*newboard, 1);
     printpossiblemoves(p2, *newboard);
+    free(p1);
     free(p2);
     return (0);
 }
