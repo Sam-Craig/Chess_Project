@@ -5,9 +5,6 @@
 #define BOARD_WIDTH
 #define BOARD_HEIGHT
 
-#define MOVE_ARR_SIZE 140
-#define MOVE_INFO_ARR_SIZE 5
-
 // Macros for different pieces to improve clarity
 #define BLANK 0
 
@@ -35,39 +32,22 @@ typedef struct{
     int arr[8][8];
 } board;
 
-// This is a 140x5 array.
-typedef int moveinfoarr[MOVE_INFO_ARR_SIZE];
-
-typedef struct{
-    moveinfoarr movearr[MOVE_ARR_SIZE];
-    int cur;
-} pmoves;
-
 // Could maybe be a macro?
 char inttopiece(int piece);
 
-void printpossiblemoves(pmoves *possiblemoves, board game);
 
 void printboard(board toprint);
 
 board* initboard();
 
-void movepiece(board *game, int xinit, int yinit, int xdest, int ydest, int testlegal);
+int movepiece(board * game, int xinit, int yinit, int xdest, int ydest, int test);
 
-void insert_pmove(pmoves *moves, board game, int curx, int cury, int newx, int newy);
+int testlegal(board * game, int xinit, int yinit, int xdest, int ydest);
 
-pmoves* getlegalmoves(board game, int side);
+extern const int scorearr[13];
 
-void pawnlegalmoves(board game, pmoves * moves, int x, int y, int side);
+int incheck(board game, int side);
 
-void knightlegalmoves(board game, pmoves * moves, int x, int y, int side);
-
-void bishoplegalmoves(board game, pmoves * moves, int x, int y, int side);
-
-void rooklegalmoves(board game, pmoves * moves, int x, int y, int side);
-
-void queenlegalmoves(board game, pmoves * moves, int x, int y, int side);
-
-// int kinglegalmoves(board game, movearr * moves, int cur, int x, int y, int side);
+int incheckmate(board game, int side);
 
 #endif

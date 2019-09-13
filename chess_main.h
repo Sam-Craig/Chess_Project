@@ -2,6 +2,10 @@
 
 #define CHESS_MAIN_H
 
-int main(void);
+int main(int argc, char *argv[]);
+
+int interactive(int filedes);
+
+int code_test(void);
 
 #endif

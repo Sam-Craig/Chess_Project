@@ -2,8 +2,10 @@ cmake_minimum_required(VERSION 3.0.0)
 project(Chess C)
 
 add_library(Util chess_util.c)
-add_executable(Main chess_main.c)
-target_link_libraries(Main Util)
+add_library(CPU chess_cpu.c)
+add_library(Comm chess_com.c)
+add_executable(Chess chess_main.c)
+target_link_libraries(Chess Util CPU Comm)
 
 
-install(TARGETS Main DESTINATION bin)
+install(TARGETS Chess DESTINATION bin)
